@@ -18,7 +18,7 @@ type Filebackend struct {
 	dir string
 }
 
-// WriteTo will pass our writer to be writter to
+// WriteTo will pass a writer to the provided function
 func (fw *Filebackend) WriteTo(key string, fn func(io.Writer) error) (err error) {
 	// We decided to make dir here every call to WriteTo to ensure the service is durable.
 	// In the off-chance there is someone manually deleting directories, or another service
@@ -43,9 +43,25 @@ func (fw *Filebackend) WriteTo(key string, fn func(io.Writer) error) (err error)
 	f.Close()
 
 	if err != nil {
+		// We encountered an error, delete the file
 		// TODO: Add some Filebackend-level logging to handle this error
 		os.Remove(filename)
 	}
 
 	return
+}
+
+// ReadFrom will pass a reader to the provided function
+func (fw *Filebackend) ReadFrom(key string, fn func(io.Reader) error) (err error) {
+	var f *os.File
+	// Filename is a mixture of the Filebackend directory and the provided key
+	filename := path.Join(fw.dir, key)
+	// Create a file at the given filename
+	if f, err = os.Open(filename); err != nil {
+		return
+	}
+	// Defer the closing of the file
+	defer f.Close()
+	// Call provided func and pass file
+	return fn(f)
 }
