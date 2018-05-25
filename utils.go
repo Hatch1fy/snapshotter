@@ -3,7 +3,6 @@ package snapshotter
 import (
 	"fmt"
 	"io"
-	"strconv"
 	"time"
 )
 
@@ -22,15 +21,19 @@ const (
 	Year = Day * 365
 )
 
-func getKey(truncate time.Duration) (key string) {
+func getKey(name, ext string, truncate time.Duration) (key string) {
+	// Get truncated unix timestamp
+	unix := getTruncatedUnix(truncate)
+	return fmt.Sprintf("%s.%d.%s", name, unix, ext)
+}
+
+func getTruncatedUnix(truncate time.Duration) (unix int64) {
 	// Get current time
 	now := time.Now()
 	// Truncate time to truncate value
 	truncated := getTruncated(now, truncate)
 	// Get the nano Unix timestamp
-	unix := truncated.Unix()
-	// Convert the timestamp to a string
-	return strconv.FormatInt(unix, 10)
+	return truncated.Unix()
 }
 
 func getTruncated(t time.Time, truncate time.Duration) (truncated time.Time) {
@@ -52,6 +55,18 @@ func getTruncated(t time.Time, truncate time.Duration) (truncated time.Time) {
 		// This should have been caught by New call. This panic should NEVER happen
 		panic(fmt.Sprintf("invalid truncate provided: %v\n", truncate))
 	}
+}
+
+func isValidTruncate(truncate time.Duration) (valid bool) {
+	switch truncate {
+	case time.Hour:
+	case time.Minute:
+	case time.Second:
+	default:
+		return false
+	}
+
+	return true
 }
 
 // Snapshottee is the interface for values which can be used for snapshots
