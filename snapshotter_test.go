@@ -28,7 +28,7 @@ func TestSnapshotter(t *testing.T) {
 	sn := snapshottees.NewBolt(db)
 	fb := backends.NewFilebackend("./testing_backend")
 
-	if s, err = New(sn, fb, 1, time.Second); err != nil {
+	if s, err = New(sn, fb, NewConfig("test", "db")); err != nil {
 		t.Fatal(err)
 	}
 	//defer s.Close()

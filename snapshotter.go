@@ -12,26 +12,23 @@ import (
 const (
 	// ErrInvalidTruncate is returned when an invalid truncate duration is set
 	ErrInvalidTruncate = errors.Error("invalid truncate duration, must select time.Hour, time.Minute, or time.Second")
+	// ErrInvalidInterval is returned when an invalid interval duration is set
+	ErrInvalidInterval = errors.Error("invalid interval duration, must be greater than or equal to one second")
 )
 
 // New returns a new instance of snapshotter
-func New(sn Snapshottee, be Backend, interval int, truncate time.Duration) (sp *Snapshotter, err error) {
+func New(sn Snapshottee, be Backend, cfg Config) (sp *Snapshotter, err error) {
 	var s Snapshotter
 	s.sn = sn
 	s.be = be
+	s.cfg = cfg
 
-	switch truncate {
-	case time.Hour:
-	case time.Minute:
-	case time.Second:
-	default:
+	if !isValidTruncate(cfg.Truncate) {
 		err = ErrInvalidTruncate
 		return
 	}
 
-	s.trunc = truncate
-
-	go s.loop(interval)
+	go s.loop(s.cfg.Interval)
 	sp = &s
 	return
 }
@@ -40,8 +37,9 @@ func New(sn Snapshottee, be Backend, interval int, truncate time.Duration) (sp *
 type Snapshotter struct {
 	mu sync.RWMutex
 
-	sn Snapshottee
-	be Backend
+	sn  Snapshottee
+	be  Backend
+	cfg Config
 
 	trunc time.Duration
 
@@ -49,14 +47,12 @@ type Snapshotter struct {
 }
 
 // loop will loop snapshots on a provided interval (in seconds)
-func (s *Snapshotter) loop(interval int) {
+func (s *Snapshotter) loop(interval time.Duration) {
 	var err error
-	// Set interval duration as our interval converted to time.Second
-	intervalDuration := time.Second * time.Duration(interval)
 	// Run loop as long as our service hasn't closed
 	for err != errors.ErrIsClosed {
 		// We sleep first because we want to wait for the interval duration before snapshotting.
-		time.Sleep(intervalDuration)
+		time.Sleep(interval)
 		// Attempt to snapshot
 		if err = s.snapshot(); err != nil {
 			fmt.Printf("Error encountered snapshotting: %v\n", err)
@@ -69,7 +65,7 @@ func (s *Snapshotter) loop(interval int) {
 // snapshot will call a new Writer and Snapshottee then copy to the Writer
 func (s *Snapshotter) snapshot() (err error) {
 	// Get new key
-	key := getKey(s.trunc)
+	key := getKey(s.cfg.Name, s.cfg.Extension, s.trunc)
 	// Attempt to write to our Writee
 	return s.be.WriteTo(key, s.sn.Copy)
 }
