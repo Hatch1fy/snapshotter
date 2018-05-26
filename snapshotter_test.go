@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/Hatch1fy/snapshotter/backends"
-	"github.com/Hatch1fy/snapshotter/snapshottees"
+	"github.com/Hatch1fy/snapshotter/frontends"
 	"github.com/boltdb/bolt"
 )
 
@@ -17,21 +17,30 @@ func TestSnapshotter(t *testing.T) {
 		err error
 	)
 
-	if err = os.MkdirAll("./testing_snapshottee", 0744); err != nil {
+	if err = os.MkdirAll("./testing_frontend", 0744); err != nil {
 		t.Fatal(err)
 	}
 
-	if db, err = bolt.Open("./testing_snapshottee/bolt.db", 0744, nil); err != nil {
+	if db, err = bolt.Open("./testing_frontend/bolt.db", 0744, nil); err != nil {
 		t.Fatal(err)
 	}
 
-	sn := snapshottees.NewBolt(db)
+	sn := frontends.NewBolt(db)
 	fb := backends.NewFilebackend("./testing_backend")
 
-	if s, err = New(sn, fb, NewConfig("test", "db")); err != nil {
+	// Initialize configuration
+	cfg := NewConfig("test", "db")
+	// Set interval to one second
+	cfg.Interval = Second
+	// Set truncate to one sec
+	cfg.Truncate = Second
+
+	// Initialize a new instance of Snapshotter
+	if s, err = New(sn, fb, cfg); err != nil {
 		t.Fatal(err)
 	}
-	//defer s.Close()
+	// Defer the closing of Snapshotter
+	defer s.Close()
 
 	db.Update(func(txn *bolt.Tx) (err error) {
 		var bkt *bolt.Bucket
@@ -43,6 +52,4 @@ func TestSnapshotter(t *testing.T) {
 	})
 
 	time.Sleep(time.Second * 5)
-
-	s.Close()
 }

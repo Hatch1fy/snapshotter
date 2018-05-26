@@ -17,9 +17,9 @@ const (
 )
 
 // New returns a new instance of snapshotter
-func New(sn Snapshottee, be Backend, cfg Config) (sp *Snapshotter, err error) {
+func New(fe Frontend, be Backend, cfg Config) (sp *Snapshotter, err error) {
 	var s Snapshotter
-	s.sn = sn
+	s.fe = fe
 	s.be = be
 	s.cfg = cfg
 
@@ -37,11 +37,9 @@ func New(sn Snapshottee, be Backend, cfg Config) (sp *Snapshotter, err error) {
 type Snapshotter struct {
 	mu sync.RWMutex
 
-	sn  Snapshottee
+	fe  Frontend
 	be  Backend
 	cfg Config
-
-	trunc time.Duration
 
 	closed atoms.Bool
 }
@@ -62,15 +60,15 @@ func (s *Snapshotter) loop(interval time.Duration) {
 	return
 }
 
-// snapshot will call a new Writer and Snapshottee then copy to the Writer
+// snapshot will write to our back-end from our front-end
 func (s *Snapshotter) snapshot() (err error) {
 	// Get new key
-	key := getKey(s.cfg.Name, s.cfg.Extension, s.trunc)
+	key := getKey(s.cfg.Name, s.cfg.Extension, s.cfg.Truncate)
 	// Attempt to write to our Writee
-	return s.be.WriteTo(key, s.sn.Copy)
+	return s.be.WriteTo(key, s.fe.Copy)
 }
 
-// Snapshot will call a new Writer and Snapshottee then copy to the Writer
+// Snapshot will call snapshot under the protection of a write-lock
 func (s *Snapshotter) Snapshot() (err error) {
 	// Ensure our service hasn't been closed
 	if s.closed.Get() {

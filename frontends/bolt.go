@@ -1,4 +1,4 @@
-package snapshottees
+package frontends
 
 import (
 	"io"
@@ -6,14 +6,14 @@ import (
 	"github.com/boltdb/bolt"
 )
 
-// NewBolt returns a new bolt.DB Snapshottee layer
+// NewBolt returns a new bolt.DB front-end layer
 func NewBolt(db *bolt.DB) *Bolt {
 	var b Bolt
 	b.db = db
 	return &b
 }
 
-// Bolt is a Snapshottee layer for bolt.DB
+// Bolt is a front-end layer for bolt.DB
 type Bolt struct {
 	db *bolt.DB
 }

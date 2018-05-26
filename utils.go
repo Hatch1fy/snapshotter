@@ -69,8 +69,8 @@ func isValidTruncate(truncate time.Duration) (valid bool) {
 	return true
 }
 
-// Snapshottee is the interface for values which can be used for snapshots
-type Snapshottee interface {
+// Frontend is the interface for values which can be used for snapshots
+type Frontend interface {
 	Copy(w io.Writer) error
 }
 
