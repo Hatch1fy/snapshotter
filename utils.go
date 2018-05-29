@@ -77,5 +77,5 @@ type Frontend interface {
 // Backend is the interface for values which can be stored and retrieved
 type Backend interface {
 	WriteTo(key string, fn func(io.Writer) error) error
-	ReadFrom(key, fn func(io.Reader) error) error
+	ReadFrom(key string, fn func(io.Reader) error) error
 }
