@@ -27,11 +27,11 @@ type Config struct {
 func (c *Config) Validate() (err error) {
 	var errs errors.ErrorList
 	if !isValidTruncate(c.Truncate) {
-		errs = append(errs, ErrInvalidTruncate)
+		errs.Push(ErrInvalidTruncate)
 	}
 
 	if c.Interval < Second {
-		errs = append(errs, ErrInvalidInterval)
+		errs.Push(ErrInvalidInterval)
 	}
 
 	return errs.Err()
