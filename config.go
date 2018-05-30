@@ -19,7 +19,6 @@ func NewConfig(name, ext string) (cfg Config) {
 type Config struct {
 	Name      string
 	Extension string
-	DataDir   string
 	Interval  time.Duration
 	Truncate  time.Duration
 }
@@ -33,10 +32,6 @@ func (c *Config) Validate() (err error) {
 
 	if c.Interval < Second {
 		errs.Push(ErrInvalidInterval)
-	}
-
-	if len(c.DataDir) == 0 {
-		errs.Push(ErrInvalidDataDirectory)
 	}
 
 	return errs.Err()

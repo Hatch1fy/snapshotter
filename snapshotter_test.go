@@ -18,7 +18,7 @@ import (
 
 const (
 	backendTestDir  = "./testing_backend"
-	frontendTestDir = "./testing_backend"
+	frontendTestDir = "./testing_frontend"
 	dataTestDir     = "./testing_data"
 )
 
@@ -116,8 +116,6 @@ func testSnapshotter(t *testing.T, fe Frontend, be Backend, confirm func(io.Read
 	cfg.Interval = Second
 	// Set truncate to one sec
 	cfg.Truncate = Second
-	// Set data directory
-	cfg.DataDir = dataTestDir
 
 	defer os.RemoveAll(dataTestDir)
 

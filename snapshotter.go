@@ -7,7 +7,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Hatch1fy/mmapstore"
 	"github.com/PathDNA/atoms"
 	"github.com/missionMeteora/toolkit/errors"
 )
@@ -38,11 +37,6 @@ func New(fe Frontend, be Backend, cfg Config) (sp *Snapshotter, err error) {
 	// Get the length of the key
 	keyLen := int64(len(referenceKey))
 
-	// Initialize a new instance of mmapstore
-	if s.lastKey, err = mmapstore.New(cfg.Name+".sref", cfg.DataDir, keyLen); err != nil {
-		return
-	}
-
 	// Begin snapshot loop
 	go s.loop(s.cfg.Interval)
 	// Assign snapshotter pointer as a reference to our snapshotter struct
@@ -58,8 +52,6 @@ type Snapshotter struct {
 	be  Backend
 	cfg Config
 
-	// Last key store
-	lastKey *mmapstore.MMapStore
 	// Closed state
 	closed atoms.Bool
 }
