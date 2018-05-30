@@ -35,5 +35,9 @@ func (c *Config) Validate() (err error) {
 		errs.Push(ErrInvalidInterval)
 	}
 
+	if len(c.DataDir) == 0 {
+		errs.Push(ErrInvalidDataDirectory)
+	}
+
 	return errs.Err()
 }
