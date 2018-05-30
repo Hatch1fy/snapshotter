@@ -60,7 +60,7 @@ func testBolt(t *testing.T, be Backend) {
 		}
 		defer os.Remove(filename)
 
-		return confirmBolt(filename, bucketKey, key, value)
+		return confirmBoltTest(filename, bucketKey, key, value)
 	})
 }
 
@@ -76,7 +76,7 @@ func newTestTmpFile(r io.Reader) (filename string, err error) {
 	return
 }
 
-func confirmBolt(filename string, bucketKey, key, intendedValue []byte) (err error) {
+func confirmBoltTest(filename string, bucketKey, key, intendedValue []byte) (err error) {
 	var db *bolt.DB
 	if db, err = bolt.Open(filename, 0744, nil); err != nil {
 		return
