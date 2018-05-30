@@ -1,6 +1,7 @@
 package snapshotter
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"sync"
@@ -83,12 +84,37 @@ func (s *Snapshotter) loop(interval time.Duration) {
 func (s *Snapshotter) snapshot() (err error) {
 	// Get new key
 	key := getKey(s.cfg.Name, s.cfg.Extension, s.cfg.Truncate)
+
 	// Attempt to write to our Writee
 	if err = s.be.WriteTo(key, s.fe.Copy); err != nil {
 		return
 	}
-	// Set last key
-	return s.lastKey.Set([]byte(key))
+
+	return s.setLatest(key)
+}
+
+func (s *Snapshotter) getLatest() (key string, err error) {
+	// View latest key's current bytes
+	err = s.be.ReadFrom("latest.txt", func(r io.Reader) (err error) {
+		buf := bytes.NewBuffer(nil)
+		if _, err = io.Copy(buf, r); err != nil {
+			return
+		}
+
+		key = buf.String()
+		return
+	})
+
+	return
+}
+
+func (s *Snapshotter) setLatest(key string) (err error) {
+	err = s.be.WriteTo("latest.txt", func(w io.Writer) (err error) {
+		_, err = w.Write([]byte(key))
+		return
+	})
+
+	return
 }
 
 // Load will load a reader from the given key
@@ -119,8 +145,8 @@ func (s *Snapshotter) Snapshot() (err error) {
 	return s.snapshot()
 }
 
-// LastKey will return the last key saved
-func (s *Snapshotter) LastKey() (key string, err error) {
+// LatestKey will return the last key saved
+func (s *Snapshotter) LatestKey() (key string, err error) {
 	// Ensure our service hasn't been closed
 	if s.closed.Get() {
 		// Service has been closed, return
@@ -128,13 +154,7 @@ func (s *Snapshotter) LastKey() (key string, err error) {
 		return
 	}
 
-	// View last key's current bytes
-	err = s.lastKey.View(func(bs []byte) {
-		// Set key as a stringified value of our last key bytes
-		key = string(bs)
-	})
-
-	return
+	return s.getLatest()
 }
 
 // Close will close the Snapshotter
