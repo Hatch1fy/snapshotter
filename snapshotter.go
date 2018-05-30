@@ -82,7 +82,7 @@ func (s *Snapshotter) snapshot() (err error) {
 
 func (s *Snapshotter) getLatest() (key string, err error) {
 	// View latest key's current bytes
-	err = s.be.ReadFrom("latest.txt", func(r io.Reader) (err error) {
+	err = s.be.ReadFrom(s.cfg.Name+".latest.txt", func(r io.Reader) (err error) {
 		buf := bytes.NewBuffer(nil)
 		if _, err = io.Copy(buf, r); err != nil {
 			return
@@ -96,7 +96,7 @@ func (s *Snapshotter) getLatest() (key string, err error) {
 }
 
 func (s *Snapshotter) setLatest(key string) (err error) {
-	err = s.be.WriteTo("latest.txt", func(w io.Writer) (err error) {
+	err = s.be.WriteTo(s.cfg.Name+".latest.txt", func(w io.Writer) (err error) {
 		_, err = w.Write([]byte(key))
 		return
 	})
