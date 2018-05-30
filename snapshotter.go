@@ -2,6 +2,7 @@ package snapshotter
 
 import (
 	"fmt"
+	"io"
 	"sync"
 	"time"
 
@@ -15,6 +16,8 @@ const (
 	ErrInvalidTruncate = errors.Error("invalid truncate duration, must select time.Hour, time.Minute, or time.Second")
 	// ErrInvalidInterval is returned when an invalid interval duration is set
 	ErrInvalidInterval = errors.Error("invalid interval duration, must be greater than or equal to one second")
+	// ErrInvalidDataDirectory is returned when an invalid data directory is set
+	ErrInvalidDataDirectory = errors.Error("invalid data directory, cannot be empty")
 )
 
 // New returns a new instance of snapshotter
@@ -29,7 +32,19 @@ func New(fe Frontend, be Backend, cfg Config) (sp *Snapshotter, err error) {
 		return
 	}
 
+	// Create an example reference key
+	referenceKey := getKey(s.cfg.Name, s.cfg.Extension, s.cfg.Truncate)
+	// Get the length of the key
+	keyLen := int64(len(referenceKey))
+
+	// Initialize a new instance of mmapstore
+	if s.lastKey, err = mmapstore.New(cfg.Name+".sref", cfg.DataDir, keyLen); err != nil {
+		return
+	}
+
+	// Begin snapshot loop
 	go s.loop(s.cfg.Interval)
+	// Assign snapshotter pointer as a reference to our snapshotter struct
 	sp = &s
 	return
 }
@@ -38,12 +53,13 @@ func New(fe Frontend, be Backend, cfg Config) (sp *Snapshotter, err error) {
 type Snapshotter struct {
 	mu sync.RWMutex
 
-	mm *mmapstore.MMapStore
-
 	fe  Frontend
 	be  Backend
 	cfg Config
 
+	// Last key store
+	lastKey *mmapstore.MMapStore
+	// Closed state
 	closed atoms.Bool
 }
 
@@ -68,7 +84,23 @@ func (s *Snapshotter) snapshot() (err error) {
 	// Get new key
 	key := getKey(s.cfg.Name, s.cfg.Extension, s.cfg.Truncate)
 	// Attempt to write to our Writee
-	return s.be.WriteTo(key, s.fe.Copy)
+	if err = s.be.WriteTo(key, s.fe.Copy); err != nil {
+		return
+	}
+	// Set last key
+	return s.lastKey.Set([]byte(key))
+}
+
+// Load will load a reader from the given key
+func (s *Snapshotter) Load(key string, fn func(io.Reader) error) (err error) {
+	// Ensure our service hasn't been closed
+	if s.closed.Get() {
+		// Service has been closed, return
+		return errors.ErrIsClosed
+	}
+
+	// Read from back-end
+	return s.be.ReadFrom(key, fn)
 }
 
 // Snapshot will call snapshot under the protection of a write-lock
@@ -87,8 +119,22 @@ func (s *Snapshotter) Snapshot() (err error) {
 	return s.snapshot()
 }
 
-func (s *Snapshotter) LastKey() (key string) {
+// LastKey will return the last key saved
+func (s *Snapshotter) LastKey() (key string, err error) {
+	// Ensure our service hasn't been closed
+	if s.closed.Get() {
+		// Service has been closed, return
+		err = errors.ErrIsClosed
+		return
+	}
 
+	// View last key's current bytes
+	err = s.lastKey.View(func(bs []byte) {
+		// Set key as a stringified value of our last key bytes
+		key = string(bs)
+	})
+
+	return
 }
 
 // Close will close the Snapshotter
