@@ -32,11 +32,6 @@ func New(fe Frontend, be Backend, cfg Config) (sp *Snapshotter, err error) {
 		return
 	}
 
-	// Create an example reference key
-	referenceKey := getKey(s.cfg.Name, s.cfg.Extension, s.cfg.Truncate)
-	// Get the length of the key
-	keyLen := int64(len(referenceKey))
-
 	// Begin snapshot loop
 	go s.loop(s.cfg.Interval)
 	// Assign snapshotter pointer as a reference to our snapshotter struct
