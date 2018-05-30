@@ -6,6 +6,7 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
+	"path"
 	"testing"
 	"time"
 
@@ -15,8 +16,14 @@ import (
 	"github.com/missionMeteora/toolkit/errors"
 )
 
+const (
+	backendTestDir  = "./testing_backend"
+	frontendTestDir = "./testing_backend"
+	dataTestDir     = "./testing_data"
+)
+
 func TestSnapshotter(t *testing.T) {
-	be := backends.NewFilebackend("./testing_backend")
+	be := backends.NewFilebackend(backendTestDir)
 	testBolt(t, be)
 }
 
@@ -26,11 +33,11 @@ func testBolt(t *testing.T, be Backend) {
 		err error
 	)
 
-	if err = os.MkdirAll("./testing_frontend", 0744); err != nil {
+	if err = os.MkdirAll(frontendTestDir, 0744); err != nil {
 		t.Fatal(err)
 	}
 
-	if db, err = bolt.Open("./testing_frontend/bolt.db", 0744, nil); err != nil {
+	if db, err = bolt.Open(path.Join(frontendTestDir, "bolt.db"), 0744, nil); err != nil {
 		t.Fatal(err)
 	}
 
@@ -110,9 +117,9 @@ func testSnapshotter(t *testing.T, fe Frontend, be Backend, confirm func(io.Read
 	// Set truncate to one sec
 	cfg.Truncate = Second
 	// Set data directory
-	cfg.DataDir = "./testing_data"
+	cfg.DataDir = dataTestDir
 
-	defer os.RemoveAll("./testing_data")
+	defer os.RemoveAll(dataTestDir)
 
 	// Initialize a new instance of Snapshotter
 	if s, err = New(fe, be, cfg); err != nil {
@@ -123,14 +130,14 @@ func testSnapshotter(t *testing.T, fe Frontend, be Backend, confirm func(io.Read
 
 	time.Sleep(time.Second * 5)
 
-	var lastKey string
+	var latest string
 	// Get the latest key
-	if lastKey, err = s.LastKey(); err != nil {
+	if latest, err = s.LatestKey(); err != nil {
 		t.Fatal(err)
 	}
 
 	// Call load and pass the reader to confirmation function
-	if err = s.Load(lastKey, confirm); err != nil {
+	if err = s.Load(latest, confirm); err != nil {
 		t.Fatal(err)
 	}
 }
