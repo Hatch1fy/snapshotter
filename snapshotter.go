@@ -5,6 +5,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/Hatch1fy/mmapstore"
 	"github.com/PathDNA/atoms"
 	"github.com/missionMeteora/toolkit/errors"
 )
@@ -36,6 +37,8 @@ func New(fe Frontend, be Backend, cfg Config) (sp *Snapshotter, err error) {
 // Snapshotter will manage a snapshotting service
 type Snapshotter struct {
 	mu sync.RWMutex
+
+	mm *mmapstore.MMapStore
 
 	fe  Frontend
 	be  Backend
@@ -82,6 +85,10 @@ func (s *Snapshotter) Snapshot() (err error) {
 	defer s.mu.Unlock()
 	// Attempt to snapshot
 	return s.snapshot()
+}
+
+func (s *Snapshotter) LastKey() (key string) {
+
 }
 
 // Close will close the Snapshotter
