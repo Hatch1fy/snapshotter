@@ -13,23 +13,27 @@ import (
 
 // NewS3Backend will return a new instance of S3
 func NewS3Backend(cfg aws.Config, bucket string) (sp *S3Backend, err error) {
-	var s3 S3Backend
+	var s3b S3Backend
 	// The session the S3 Uploader will use
 	sess := session.Must(session.NewSession(&cfg))
 
+	// Create s3 service with the session and the default options
+	s3b.s = s3.New(sess, &cfg)
 	// Create an uploader with the session and default options
-	s3.u = s3manager.NewUploader(sess)
+	s3b.u = s3manager.NewUploader(sess)
 	// Create a downloader with the session and default options
-	s3.d = s3manager.NewDownloader(sess)
+	s3b.d = s3manager.NewDownloader(sess)
+
 	// Set s3 bucket
-	s3.bucket = bucket
+	s3b.bucket = bucket
 	// Assign S3's pointer
-	sp = &s3
+	sp = &s3b
 	return
 }
 
 // S3Backend manages the Amazon S3 backend
 type S3Backend struct {
+	s *s3.S3
 	u *s3manager.Uploader
 	d *s3manager.Downloader
 
@@ -109,4 +113,70 @@ func (s *S3Backend) ReadFrom(key string, fn func(io.Reader) error) (err error) {
 	}
 	// Call function and pass temporary file as reader
 	return fn(tmp)
+}
+
+// newIterator will return a new iterator
+func (s *S3Backend) newIterator(prefix, marker string, maxKeys int64) (output *s3.ListObjectsOutput, err error) {
+	input := &s3.ListObjectsInput{
+		Bucket:  aws.String(s.bucket),
+		Prefix:  aws.String(prefix),
+		Marker:  aws.String(marker),
+		MaxKeys: aws.Int64(maxKeys),
+	}
+
+	return s.s.ListObjects(input)
+}
+
+// ForEach will iterate through all the keys
+func (s *S3Backend) ForEach(prefix, marker string, maxKeys int64, fn func(key string) (err error)) (err error) {
+	iter := newIterator(s.s, s.bucket, prefix, marker, maxKeys)
+
+	// Iterate until error
+	for {
+		var key string
+		// Get next key
+		if key, err = iter.Next(); err != nil {
+			// Error encountered, break
+			break
+		}
+
+		if err = fn(key); err != nil {
+			break
+		}
+	}
+
+	if err == io.EOF || err == Break {
+		err = nil
+	}
+
+	return
+}
+
+// List will list the backend keys
+func (s *S3Backend) List(prefix, marker string, maxKeys int64) (keys []string, err error) {
+	iter := newIterator(s.s, s.bucket, prefix, marker, maxKeys)
+
+	// Iterate until error
+	for {
+		var key string
+		// Get next key
+		if key, err = iter.Next(); err != nil {
+			// Error encountered, break
+			break
+		}
+
+		if len(keys) == 0 {
+			// We haven't created keys yet, pre-allocate keys as iterator length
+			keys = make([]string, 0, iter.Len())
+		}
+
+		// Append key to keys slice
+		keys = append(keys, key)
+	}
+
+	if err == io.EOF {
+		err = nil
+	}
+
+	return
 }
