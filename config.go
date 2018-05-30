@@ -19,6 +19,7 @@ func NewConfig(name, ext string) (cfg Config) {
 type Config struct {
 	Name      string
 	Extension string
+	DataDir   string
 	Interval  time.Duration
 	Truncate  time.Duration
 }
