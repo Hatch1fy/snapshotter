@@ -19,10 +19,10 @@ import (
 const (
 	backendTestDir  = "./testing_backend"
 	frontendTestDir = "./testing_frontend"
-	dataTestDir     = "./testing_data"
 )
 
 func TestSnapshotter(t *testing.T) {
+	defer os.RemoveAll(backendTestDir)
 	be := backends.NewFilebackend(backendTestDir)
 	testBolt(t, be)
 }
@@ -33,6 +33,7 @@ func testBolt(t *testing.T, be Backend) {
 		err error
 	)
 
+	defer os.RemoveAll(frontendTestDir)
 	if err = os.MkdirAll(frontendTestDir, 0744); err != nil {
 		t.Fatal(err)
 	}
@@ -116,8 +117,6 @@ func testSnapshotter(t *testing.T, fe Frontend, be Backend, confirm func(io.Read
 	cfg.Interval = Second
 	// Set truncate to one sec
 	cfg.Truncate = Second
-
-	defer os.RemoveAll(dataTestDir)
 
 	// Initialize a new instance of Snapshotter
 	if s, err = New(fe, be, cfg); err != nil {
