@@ -12,7 +12,6 @@ import (
 
 func TestSnapshotter(t *testing.T) {
 	var (
-		s   *Snapshotter
 		db  *bolt.DB
 		err error
 	)
@@ -25,9 +24,27 @@ func TestSnapshotter(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	sn := frontends.NewBolt(db)
-	fb := backends.NewFilebackend("./testing_backend")
+	fe := frontends.NewBolt(db)
+	be := backends.NewFilebackend("./testing_backend")
 
+	if err = db.Update(func(txn *bolt.Tx) (err error) {
+		var bkt *bolt.Bucket
+		if bkt, err = txn.CreateBucketIfNotExists([]byte("test")); err != nil {
+			return
+		}
+
+		return bkt.Put([]byte("key"), []byte("1"))
+	}); err != nil {
+		t.Fatal(err)
+	}
+
+	if err = testSnapshotter(fe, be); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func testSnapshotter(fe Frontend, be Backend) (err error) {
+	var s *Snapshotter
 	// Initialize configuration
 	cfg := NewConfig("test", "db")
 	// Set interval to one second
@@ -36,20 +53,12 @@ func TestSnapshotter(t *testing.T) {
 	cfg.Truncate = Second
 
 	// Initialize a new instance of Snapshotter
-	if s, err = New(sn, fb, cfg); err != nil {
-		t.Fatal(err)
+	if s, err = New(fe, be, cfg); err != nil {
+		return
 	}
 	// Defer the closing of Snapshotter
 	defer s.Close()
 
-	db.Update(func(txn *bolt.Tx) (err error) {
-		var bkt *bolt.Bucket
-		if bkt, err = txn.CreateBucketIfNotExists([]byte("test")); err != nil {
-			return
-		}
-
-		return bkt.Put([]byte("key"), []byte("1"))
-	})
-
 	time.Sleep(time.Second * 5)
+	return
 }
