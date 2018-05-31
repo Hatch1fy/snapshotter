@@ -1,3 +1,9 @@
+# Snapshotter
+
+Snapshotter is a database snapshot utility which snapshots and truncates for the configured values.
+
+# Usage
+```go
 package main
 
 import (
@@ -83,3 +89,5 @@ func main() {
 
 	fmt.Printf("Our latest key was: %s\n", latest)
 }
+
+```
