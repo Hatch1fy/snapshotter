@@ -26,6 +26,16 @@ type Config struct {
 // Validate will validate a Config
 func (c *Config) Validate() (err error) {
 	var errs errors.ErrorList
+	// Ensure name is not empty
+	if len(c.Name) == 0 {
+		errs.Push(ErrInvalidName)
+	}
+
+	// Ensure extension is not empty
+	if len(c.Extension) == 0 {
+		errs.Push(ErrInvalidExtension)
+	}
+
 	// Check if truncate value is correct
 	if !isValidTruncate(c.Truncate) {
 		errs.Push(ErrInvalidTruncate)

@@ -16,8 +16,10 @@ const (
 	ErrInvalidTruncate = errors.Error("invalid truncate duration, must select time.Hour, time.Minute, or time.Second")
 	// ErrInvalidInterval is returned when an invalid interval duration is set
 	ErrInvalidInterval = errors.Error("invalid interval duration, must be greater than or equal to one second")
-	// ErrInvalidDataDirectory is returned when an invalid data directory is set
-	ErrInvalidDataDirectory = errors.Error("invalid data directory, cannot be empty")
+	// ErrInvalidName is returned when an invalid name is set
+	ErrInvalidName = errors.Error("invalid name, cannot be empty")
+	// ErrInvalidExtension is returned when an invalid extension is set
+	ErrInvalidExtension = errors.Error("invalid extension, cannot be empty")
 )
 
 // New returns a new instance of snapshotter
