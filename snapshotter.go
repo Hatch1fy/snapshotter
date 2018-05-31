@@ -7,8 +7,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/Hatch1fy/errors"
 	"github.com/PathDNA/atoms"
-	"github.com/missionMeteora/toolkit/errors"
 )
 
 const (

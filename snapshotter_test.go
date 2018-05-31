@@ -10,10 +10,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/Hatch1fy/errors"
 	"github.com/Hatch1fy/snapshotter/backends"
 	"github.com/Hatch1fy/snapshotter/frontends"
 	"github.com/boltdb/bolt"
-	"github.com/missionMeteora/toolkit/errors"
 )
 
 const (
