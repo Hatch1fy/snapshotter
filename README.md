@@ -1,9 +1,3 @@
-# Snapshotter
-
-Snapshotter is a database snapshot utility which snapshots and truncates for the configured values.
-
-# Usage
-```go
 package main
 
 import (
@@ -66,12 +60,12 @@ func main() {
 	// Initialize a new file backend
 	be := backends.NewFilebackend(backendDir)
 
-    // Create new configuration
-    cfg := snapshotter.NewConfig("data", "db")
-    // Set interval of one second
-    cfg.Interval = snapshotter.Second
-    // Set truncate of one second
-    cfg.Truncate = snapshotter.Second
+	// Create new configuration
+	cfg := snapshotter.NewConfig("data", "db")
+	// Set interval of one second
+	cfg.Interval = snapshotter.Second
+	// Set truncate of one second
+	cfg.Truncate = snapshotter.Second
 
 	if s, err = snapshotter.New(fe, be, cfg); err != nil {
 		log.Fatal(err)
@@ -89,5 +83,3 @@ func main() {
 
 	fmt.Printf("Our latest key was: %s\n", latest)
 }
-
-```
