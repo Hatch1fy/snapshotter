@@ -67,7 +67,7 @@ func main() {
 	be := backends.NewFilebackend(backendDir)
 
     // Create new configuration
-	cfg := snapshotter.NewConfig("data", "db")
+    cfg := snapshotter.NewConfig("data", "db")
     // Set interval of one second
     cfg.Interval = snapshotter.Second
     // Set truncate of one second
