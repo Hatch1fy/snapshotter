@@ -27,6 +27,7 @@ func New(fe Frontend, be Backend, cfg Config) (sp *Snapshotter, err error) {
 	s.be = be
 	s.cfg = cfg
 
+	// Ensure we have a valid truncate value for our configuration
 	if !isValidTruncate(cfg.Truncate) {
 		err = ErrInvalidTruncate
 		return
@@ -58,6 +59,7 @@ func (s *Snapshotter) loop(interval time.Duration) {
 	for err != errors.ErrIsClosed {
 		// We sleep first because we want to wait for the interval duration before snapshotting.
 		time.Sleep(interval)
+
 		// Attempt to snapshot
 		if err = s.snapshot(); err != nil {
 			fmt.Printf("Error encountered snapshotting: %v\n", err)
@@ -74,20 +76,26 @@ func (s *Snapshotter) snapshot() (err error) {
 
 	// Attempt to write to our Writee
 	if err = s.be.WriteTo(key, s.fe.Copy); err != nil {
+		// Error encountered while writing, return
 		return
 	}
 
+	// Set our latest key value
 	return s.setLatest(key)
 }
 
 func (s *Snapshotter) getLatest() (key string, err error) {
 	// View latest key's current bytes
 	err = s.be.ReadFrom(s.cfg.Name+".latest.txt", func(r io.Reader) (err error) {
+		// Create buffer
 		buf := bytes.NewBuffer(nil)
+		// Copy reader bytes to buffer
 		if _, err = io.Copy(buf, r); err != nil {
+			// Error encountered while copying, return
 			return
 		}
 
+		// Set key as the string output of our buffer
 		key = buf.String()
 		return
 	})
@@ -96,7 +104,9 @@ func (s *Snapshotter) getLatest() (key string, err error) {
 }
 
 func (s *Snapshotter) setLatest(key string) (err error) {
+	// Set latest key's current bytes
 	err = s.be.WriteTo(s.cfg.Name+".latest.txt", func(w io.Writer) (err error) {
+		// Write key as bytes
 		_, err = w.Write([]byte(key))
 		return
 	})

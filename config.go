@@ -26,10 +26,12 @@ type Config struct {
 // Validate will validate a Config
 func (c *Config) Validate() (err error) {
 	var errs errors.ErrorList
+	// Check if truncate value is correct
 	if !isValidTruncate(c.Truncate) {
 		errs.Push(ErrInvalidTruncate)
 	}
 
+	// Ensure interval value is at least one second
 	if c.Interval < Second {
 		errs.Push(ErrInvalidInterval)
 	}

@@ -24,6 +24,7 @@ const (
 func getKey(name, ext string, truncate time.Duration) (key string) {
 	// Get truncated unix timestamp
 	unix := getTruncatedUnix(truncate)
+	// Return formatted string utilizing name, unix timestamp, and the extension
 	return fmt.Sprintf("%s.%d.%s", name, unix, ext)
 }
 
