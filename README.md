@@ -32,31 +32,13 @@ func main() {
 		err error
 	)
 
-	// Ensure our frontend test directory has been created
-	if err = os.MkdirAll(frontendDir, 0744); err != nil {
+	// Create bolt database
+	if db, err = createBoltDB(); err != nil {
 		log.Fatal(err)
 	}
 
-	// Open a bolt database within the frontend test directory with the name of "bolt.db"
-	if db, err = bolt.Open(path.Join(frontendDir, "bolt.db"), 0744, nil); err != nil {
-		log.Fatal(err)
-	}
-
-	bucketKey := []byte("main")
-	key := []byte("greeting")
-	value := []byte("hello world")
-
-	// Update bolt database
-	if err = db.Update(func(txn *bolt.Tx) (err error) {
-		var bkt *bolt.Bucket
-		// Create bucket with the key equaling our bucketKey
-		if bkt, err = txn.CreateBucketIfNotExists(bucketKey); err != nil {
-			return
-		}
-
-		// Put our value to the database
-		return bkt.Put(key, value)
-	}); err != nil {
+	// Populate bolt database
+	if err = populateValues(db); err != nil {
 		log.Fatal(err)
 	}
 
@@ -88,6 +70,37 @@ func main() {
 	}
 
 	fmt.Printf("Our latest key was: %s\n", latest)
+}
+
+func createBoltDB() (db *bolt.DB, err error) {
+	// Ensure our frontend test directory has been created
+	if err = os.MkdirAll(frontendDir, 0744); err != nil {
+		log.Fatal(err)
+	}
+
+	// Open a bolt database within the frontend test directory with the name of "bolt.db"
+	return bolt.Open(path.Join(frontendDir, "bolt.db"), 0744, nil)
+}
+
+func populateValues(db *bolt.DB) (err error) {
+
+	bucketKey := []byte("main")
+	key := []byte("greeting")
+	value := []byte("hello world")
+
+	// Update bolt database
+	err = db.Update(func(txn *bolt.Tx) (err error) {
+		var bkt *bolt.Bucket
+		// Create bucket with the key equaling our bucketKey
+		if bkt, err = txn.CreateBucketIfNotExists(bucketKey); err != nil {
+			return
+		}
+
+		// Put our value to the database
+		return bkt.Put(key, value)
+	})
+
+	return
 }
 
 ```
