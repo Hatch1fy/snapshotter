@@ -23,15 +23,14 @@ const (
 // New returns a new instance of snapshotter
 func New(fe Frontend, be Backend, cfg Config) (sp *Snapshotter, err error) {
 	var s Snapshotter
+	// Validate the inbound configuration
+	if err = cfg.Validate(); err != nil {
+		return
+	}
+
 	s.fe = fe
 	s.be = be
 	s.cfg = cfg
-
-	// Ensure we have a valid truncate value for our configuration
-	if !isValidTruncate(cfg.Truncate) {
-		err = ErrInvalidTruncate
-		return
-	}
 
 	// Begin snapshot loop
 	go s.loop(s.cfg.Interval)
