@@ -39,12 +39,10 @@ func (fb *File) WriteTo(key string, fn func(io.Writer) error) (err error) {
 
 	// We want to return this error because this was the first in the chain
 	err = fn(f)
-	// TODO: Add some File-level logging to handle this error
 	f.Close()
 
 	if err != nil {
 		// We encountered an error, delete the file
-		// TODO: Add some File-level logging to handle this error
 		os.Remove(filename)
 	}
 
