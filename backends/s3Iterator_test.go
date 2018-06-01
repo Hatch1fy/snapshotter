@@ -78,7 +78,7 @@ func TestS3Iterator(t *testing.T) {
 	}
 
 	if cnt != 1001 {
-		t.Fatalf("invalid count, expected %d and received %d", 2000, cnt)
+		t.Fatalf("invalid count, expected %d and received %d", 1001, cnt)
 	}
 
 	s3i = newIterator(svc, bucket, "", "", 7)
