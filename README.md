@@ -50,10 +50,12 @@ func main() {
 
 	// Create new configuration
 	cfg := snapshotter.NewConfig("data", "db")
-	// Set interval of one second
+	// Interval represents our snapshot interval value. This is how often we will snapshot data. We will set
+	// our configuration so that the snapshotter takes a snapshot once a second.
 	cfg.Interval = snapshotter.Second
-	// Set truncate of one second
-	cfg.Truncate = snapshotter.Second
+	// Truncate represents our snapshot truncate value. This determines which time value our snapshots will
+	// truncate to. We will set our configuration so that the snapshotter truncates our time value to the minute.
+	cfg.Truncate = snapshotter.Minute
 
 	if s, err = snapshotter.New(fe, be, cfg); err != nil {
 		log.Fatal(err)
@@ -83,7 +85,6 @@ func createBoltDB() (db *bolt.DB, err error) {
 }
 
 func populateValues(db *bolt.DB) (err error) {
-
 	bucketKey := []byte("main")
 	key := []byte("greeting")
 	value := []byte("hello world")
