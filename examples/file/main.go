@@ -40,7 +40,7 @@ func main() {
 	fe := frontends.NewBolt(db)
 
 	// Initialize a new file backend
-	be := backends.NewFilebackend(backendDir)
+	be := backends.NewFile(backendDir)
 
 	// Create new configuration
 	cfg := snapshotter.NewConfig("data", "db")

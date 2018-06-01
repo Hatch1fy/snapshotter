@@ -11,9 +11,9 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 )
 
-// NewS3Backend will return a new instance of S3
-func NewS3Backend(cfg aws.Config, bucket string) (sp *S3Backend, err error) {
-	var s3b S3Backend
+// NewS3 will return a new instance of S3
+func NewS3(cfg aws.Config, bucket string) (sp *S3, err error) {
+	var s3b S3
 	// The session the S3 Uploader will use
 	sess := session.Must(session.NewSession(&cfg))
 
@@ -31,8 +31,8 @@ func NewS3Backend(cfg aws.Config, bucket string) (sp *S3Backend, err error) {
 	return
 }
 
-// S3Backend manages the Amazon S3 backend
-type S3Backend struct {
+// S3 manages the Amazon S3 backend
+type S3 struct {
 	s *s3.S3
 	u *s3manager.Uploader
 	d *s3manager.Downloader
@@ -40,20 +40,20 @@ type S3Backend struct {
 	bucket string
 }
 
-func (s *S3Backend) newObjectInput(key string) (objInput s3.GetObjectInput) {
+func (s *S3) newObjectInput(key string) (objInput s3.GetObjectInput) {
 	objInput.Bucket = aws.String(s.bucket)
 	objInput.Key = aws.String(key)
 	return
 }
 
-func (s *S3Backend) newUploadInput(key string, r io.Reader) (input s3manager.UploadInput) {
+func (s *S3) newUploadInput(key string, r io.Reader) (input s3manager.UploadInput) {
 	input.Bucket = aws.String(s.bucket)
 	input.Key = aws.String(key)
 	input.Body = r
 	return
 }
 
-func (s *S3Backend) upload(key string, r io.Reader) (err error) {
+func (s *S3) upload(key string, r io.Reader) (err error) {
 	// Create new upload input
 	input := s.newUploadInput(key, r)
 	// Upload writer to amazon
@@ -62,7 +62,7 @@ func (s *S3Backend) upload(key string, r io.Reader) (err error) {
 }
 
 // WriteTo will write to a writer
-func (s *S3Backend) WriteTo(key string, fn func(io.Writer) error) (err error) {
+func (s *S3) WriteTo(key string, fn func(io.Writer) error) (err error) {
 	var tmp *os.File
 	if tmp, err = ioutil.TempFile("", "s3_backend"); err != nil {
 		return
@@ -89,7 +89,7 @@ func (s *S3Backend) WriteTo(key string, fn func(io.Writer) error) (err error) {
 }
 
 // ReadFrom will pass a reader to the provided function
-func (s *S3Backend) ReadFrom(key string, fn func(io.Reader) error) (err error) {
+func (s *S3) ReadFrom(key string, fn func(io.Reader) error) (err error) {
 	var tmp *os.File
 	// Create temporary file to write to
 	if tmp, err = ioutil.TempFile("", "s3_backend"); err != nil {
@@ -116,7 +116,7 @@ func (s *S3Backend) ReadFrom(key string, fn func(io.Reader) error) (err error) {
 }
 
 // newIterator will return a new iterator
-func (s *S3Backend) newIterator(prefix, marker string, maxKeys int64) (output *s3.ListObjectsOutput, err error) {
+func (s *S3) newIterator(prefix, marker string, maxKeys int64) (output *s3.ListObjectsOutput, err error) {
 	input := &s3.ListObjectsInput{
 		Bucket:  aws.String(s.bucket),
 		Prefix:  aws.String(prefix),
@@ -128,7 +128,7 @@ func (s *S3Backend) newIterator(prefix, marker string, maxKeys int64) (output *s
 }
 
 // ForEach will iterate through all the keys
-func (s *S3Backend) ForEach(prefix, marker string, maxKeys int64, fn func(key string) (err error)) (err error) {
+func (s *S3) ForEach(prefix, marker string, maxKeys int64, fn func(key string) (err error)) (err error) {
 	iter := newIterator(s.s, s.bucket, prefix, marker, maxKeys)
 
 	// Iterate until error
@@ -153,7 +153,7 @@ func (s *S3Backend) ForEach(prefix, marker string, maxKeys int64, fn func(key st
 }
 
 // List will list the backend keys
-func (s *S3Backend) List(prefix, marker string, maxKeys int64) (keys []string, err error) {
+func (s *S3) List(prefix, marker string, maxKeys int64) (keys []string, err error) {
 	iter := newIterator(s.s, s.bucket, prefix, marker, maxKeys)
 
 	// Iterate until error

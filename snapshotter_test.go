@@ -25,7 +25,7 @@ func TestSnapshotter(t *testing.T) {
 	// Defer the removal of our backend test directory
 	defer os.RemoveAll(backendTestDir)
 	// Initialize a new file backend
-	be := backends.NewFilebackend(backendTestDir)
+	be := backends.NewFile(backendTestDir)
 	// Perform bolt test with Filebackend as the backend
 	testBolt(t, be)
 }

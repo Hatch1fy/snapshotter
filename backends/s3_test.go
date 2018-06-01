@@ -13,7 +13,7 @@ import (
 
 func TestS3(t *testing.T) {
 	var (
-		s3  *S3Backend
+		s3  *S3
 		err error
 	)
 
@@ -26,7 +26,7 @@ func TestS3(t *testing.T) {
 		Credentials: creds,
 	}
 
-	if s3, err = NewS3Backend(cfg, bucket); err != nil {
+	if s3, err = NewS3(cfg, bucket); err != nil {
 		t.Fatal(err)
 	}
 
