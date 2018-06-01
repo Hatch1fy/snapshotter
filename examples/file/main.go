@@ -1,9 +1,3 @@
-# Snapshotter
-
-Snapshotter is a database snapshot utility which snapshots and truncates for the configured values.
-
-# Usage
-```go
 package main
 
 import (
@@ -46,7 +40,7 @@ func main() {
 	fe := frontends.NewBolt(db)
 
 	// Initialize a new file backend
-	be := backends.NewFilebackend(backendDir)
+	be := backends.NewFile(backendDir)
 
 	// Create new configuration
 	cfg := snapshotter.NewConfig("data", "db")
@@ -103,5 +97,3 @@ func populateValues(db *bolt.DB) (err error) {
 
 	return
 }
-
-```
