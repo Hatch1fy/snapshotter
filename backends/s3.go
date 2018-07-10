@@ -5,7 +5,9 @@ import (
 	"io/ioutil"
 	"os"
 
+	"github.com/BurntSushi/toml"
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
@@ -178,5 +180,26 @@ func (s *S3) List(prefix, marker string, maxKeys int64) (keys []string, err erro
 		err = nil
 	}
 
+	return
+}
+
+// NewS3Config will return a new parsed S3 configuration from a toml source
+func NewS3Config(src string) (s S3Config, err error) {
+	_, err = toml.DecodeFile(src, &s)
+	return
+}
+
+// S3Config represents an S3 configuration
+type S3Config struct {
+	AccessKey string `toml:"accessKey"`
+	SecretKey string `toml:"secretKey"`
+	Region    string `toml:"region"`
+	Bucket    string `toml:"buket"`
+}
+
+// Config returns the aws configuration
+func (s *S3Config) Config() (cfg aws.Config) {
+	cfg.Credentials = credentials.NewStaticCredentials(s.AccessKey, s.SecretKey, "")
+	cfg.Region = aws.String(s.Region)
 	return
 }
