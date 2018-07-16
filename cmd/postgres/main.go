@@ -35,7 +35,7 @@ func main() {
 	flag.Parse()
 
 	out := journaler.New("Postgres snapshotter")
-	out.Notification("Starting service, Hello sir!")
+	out.Notification("Starting service, Hello friend!")
 
 	if cfg, err = newConfig(path.Join(cfgPath, "config.toml")); err != nil {
 		out.Error("Error parsing configuration: %v", err)
