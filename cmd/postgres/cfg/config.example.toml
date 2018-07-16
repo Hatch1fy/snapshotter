@@ -1,0 +1,4 @@
+name = "my_database"
+environment = "production"
+bucket = "database_backups"
+interval = 1
