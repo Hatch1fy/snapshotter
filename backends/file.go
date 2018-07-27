@@ -66,9 +66,14 @@ func (fb *File) ReadFrom(key string, fn func(io.Reader) error) (err error) {
 	return fn(f)
 }
 
+// Delete will delet a key
+func (fb *File) Delete(key string) (err error) {
+	return os.Remove(filepath.Join(fb.dir, key))
+}
+
 // List will list the available keys
 func (fb *File) List(prefix, marker string, maxKeys int64) (keys []string, err error) {
-	if err = filepath.Walk(fb.dir, func(filepath string, info os.FileInfo, ierr error) (err error) {
+	err = filepath.Walk(fb.dir, func(filepath string, info os.FileInfo, ierr error) (err error) {
 		if info.IsDir() {
 			return
 		}
@@ -86,9 +91,20 @@ func (fb *File) List(prefix, marker string, maxKeys int64) (keys []string, err e
 		}
 
 		keys = append(keys, filepath)
+
+		if maxKeys == -1 {
+			return
+		}
+
+		if int64(len(keys)) == maxKeys {
+			return Break
+		}
+
 		return
-	}); err != nil {
-		return
+	})
+
+	if err == Break {
+		err = nil
 	}
 
 	return
