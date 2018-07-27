@@ -79,4 +79,5 @@ type Frontend interface {
 type Backend interface {
 	WriteTo(key string, fn func(io.Writer) error) error
 	ReadFrom(key string, fn func(io.Reader) error) error
+	List(prefix, marker string, maxKeys int64) ([]string, error)
 }
