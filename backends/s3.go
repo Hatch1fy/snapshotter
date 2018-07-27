@@ -145,8 +145,7 @@ func (s *S3) ReadFrom(key string, fn func(io.Reader) error) (err error) {
 
 // Delete will delete a file from the s3 backend
 func (s *S3) Delete(key string) (err error) {
-
-	return
+	return s.delete(key)
 }
 
 // ForEach will iterate through all the keys
