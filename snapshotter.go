@@ -83,7 +83,7 @@ func (s *Snapshotter) purgeLoop(interval time.Duration) {
 	for err != errors.ErrIsClosed {
 		// Attempt to purge
 		if err = s.purge(); err != nil {
-			fmt.Printf("Error encountered snapshotting: %v\n", err)
+			fmt.Printf("Error encountered purging: %v\n", err)
 		}
 
 		// We sleep after purging so we can ensure we are purged on start
@@ -115,8 +115,10 @@ func (s *Snapshotter) purge() (err error) {
 		return
 	}
 
+	// Get cutoff timestamp
 	cutoff := time.Now().Add(-s.cfg.TTL).Unix()
 
+	// Iterate through returned keys
 	for _, key := range keys {
 		if err = s.remove(key, cutoff); err != nil {
 			return
@@ -129,7 +131,7 @@ func (s *Snapshotter) purge() (err error) {
 func (s *Snapshotter) remove(key string, cutoff int64) (err error) {
 	var unixTS int64
 	if _, _, unixTS, err = parseKey(key); err != nil {
-		if err != ErrIsLatestKey {
+		if err == ErrIsLatestKey {
 			return nil
 		}
 
