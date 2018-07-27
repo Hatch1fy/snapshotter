@@ -55,11 +55,37 @@ func (s *S3) newUploadInput(key string, r io.Reader) (input s3manager.UploadInpu
 	return
 }
 
+func (s *S3) newDeleteInput(key string) (input s3.DeleteObjectInput) {
+	input.Bucket = aws.String(s.bucket)
+	input.Key = aws.String(key)
+	return
+}
+
+// newIterator will return a new iterator
+func (s *S3) newIterator(prefix, marker string, maxKeys int64) (output *s3.ListObjectsOutput, err error) {
+	input := &s3.ListObjectsInput{
+		Bucket:  aws.String(s.bucket),
+		Prefix:  aws.String(prefix),
+		Marker:  aws.String(marker),
+		MaxKeys: aws.Int64(maxKeys),
+	}
+
+	return s.s.ListObjects(input)
+}
+
 func (s *S3) upload(key string, r io.Reader) (err error) {
 	// Create new upload input
 	input := s.newUploadInput(key, r)
 	// Upload writer to amazon
 	_, err = s.u.Upload(&input)
+	return
+}
+
+func (s *S3) delete(key string) (err error) {
+	// Create new delete input
+	input := s.newDeleteInput(key)
+	// Delete key from amazon
+	_, err = s.s.DeleteObject(&input)
 	return
 }
 
@@ -117,16 +143,10 @@ func (s *S3) ReadFrom(key string, fn func(io.Reader) error) (err error) {
 	return fn(tmp)
 }
 
-// newIterator will return a new iterator
-func (s *S3) newIterator(prefix, marker string, maxKeys int64) (output *s3.ListObjectsOutput, err error) {
-	input := &s3.ListObjectsInput{
-		Bucket:  aws.String(s.bucket),
-		Prefix:  aws.String(prefix),
-		Marker:  aws.String(marker),
-		MaxKeys: aws.Int64(maxKeys),
-	}
+// Delete will delete a file from the s3 backend
+func (s *S3) Delete(key string) (err error) {
 
-	return s.s.ListObjects(input)
+	return
 }
 
 // ForEach will iterate through all the keys
