@@ -18,6 +18,7 @@ func newIterator(s3 *s3.S3, bucket, prefix, marker string, maxKeys int64) *S3Ite
 	var s3i S3Iterator
 	s3i.s3 = s3
 	s3i.bucket = bucket
+	s3i.prefix = prefix
 	s3i.marker = marker
 	s3i.maxKeys = maxKeys
 	return &s3i
