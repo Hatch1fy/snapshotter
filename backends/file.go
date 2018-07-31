@@ -66,7 +66,7 @@ func (fb *File) ReadFrom(key string, fn func(io.Reader) error) (err error) {
 	return fn(f)
 }
 
-// Delete will delet a key
+// Delete will delete a key
 func (fb *File) Delete(key string) (err error) {
 	return os.Remove(filepath.Join(fb.dir, key))
 }
