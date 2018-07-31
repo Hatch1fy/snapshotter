@@ -3,6 +3,8 @@ package snapshotter
 import (
 	"fmt"
 	"io"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -26,6 +28,27 @@ func getKey(name, ext string, truncate time.Duration) (key string) {
 	unix := getTruncatedUnix(truncate)
 	// Return formatted string utilizing name, unix timestamp, and the extension
 	return fmt.Sprintf("%s.%d.%s", name, unix, ext)
+}
+
+func parseKey(key string) (name, ext string, unixTS int64, err error) {
+	spl := strings.Split(key, ".")
+	if len(spl) != 3 {
+		err = ErrInvalidKey
+		return
+	}
+
+	if spl[1] == "latest" {
+		err = ErrIsLatestKey
+		return
+	}
+
+	if unixTS, err = strconv.ParseInt(spl[1], 10, 64); err != nil {
+		return
+	}
+
+	name = spl[0]
+	ext = spl[2]
+	return
 }
 
 func getTruncatedUnix(truncate time.Duration) (unix int64) {
@@ -79,4 +102,6 @@ type Frontend interface {
 type Backend interface {
 	WriteTo(key string, fn func(io.Writer) error) error
 	ReadFrom(key string, fn func(io.Reader) error) error
+	Delete(key string) error
+	List(prefix, marker string, maxKeys int64) ([]string, error)
 }

@@ -12,6 +12,7 @@ func NewConfig(name, ext string) (cfg Config) {
 	cfg.Extension = ext
 	cfg.Interval = Minute
 	cfg.Truncate = Hour
+	cfg.TTL = Month
 	return
 }
 
@@ -21,6 +22,7 @@ type Config struct {
 	Extension string
 	Interval  time.Duration
 	Truncate  time.Duration
+	TTL       time.Duration
 }
 
 // Validate will validate a Config
