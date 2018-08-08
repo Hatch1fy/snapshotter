@@ -73,11 +73,16 @@ func (s *S3) newIterator(prefix, marker string, maxKeys int64) (output *s3.ListO
 	return s.s.ListObjects(input)
 }
 
-func (s *S3) upload(key string, r io.Reader) (err error) {
+func (s *S3) upload(key string, r io.Reader) (location string, err error) {
 	// Create new upload input
 	input := s.newUploadInput(key, r)
+	var out *s3manager.UploadOutput
 	// Upload writer to amazon
-	_, err = s.u.Upload(&input)
+	if out, err = s.u.Upload(&input); err != nil {
+		return
+	}
+
+	location = out.Location
 	return
 }
 
@@ -113,7 +118,14 @@ func (s *S3) WriteTo(key string, fn func(io.Writer) error) (err error) {
 	}
 
 	// Upload file to amazon
-	return s.upload(key, tmp)
+	_, err = s.upload(key, tmp)
+	return
+}
+
+// Upload will upload a reader to s3
+func (s *S3) Upload(key string, r io.Reader) (location string, err error) {
+	// Upload file to amazon
+	return s.upload(key, r)
 }
 
 // ReadFrom will pass a reader to the provided function
