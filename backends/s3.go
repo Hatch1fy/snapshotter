@@ -13,6 +13,8 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 )
 
+var defaultS3UploadOpts S3UploadOpts
+
 // NewS3 will return a new instance of S3
 func NewS3(cfg aws.Config, bucket string) (sp *S3, err error) {
 	var s3b S3
@@ -48,10 +50,18 @@ func (s *S3) newObjectInput(key string) (objInput s3.GetObjectInput) {
 	return
 }
 
-func (s *S3) newUploadInput(key string, r io.Reader) (input s3manager.UploadInput) {
+func (s *S3) newUploadInput(key string, r io.Reader, opts S3UploadOpts) (input s3manager.UploadInput) {
 	input.Bucket = aws.String(s.bucket)
 	input.Key = aws.String(key)
 	input.Body = r
+
+	// Set options
+	input.CacheControl = opts.GetCacheControl()
+	input.ContentDisposition = opts.GetContentDisposition()
+	input.ContentEncoding = opts.GetContentEncoding()
+	input.ContentLanguage = opts.GetContentLanguage()
+	input.ContentMD5 = opts.GetContentMD5()
+	input.ContentType = opts.GetContentType()
 	return
 }
 
@@ -73,9 +83,10 @@ func (s *S3) newIterator(prefix, marker string, maxKeys int64) (output *s3.ListO
 	return s.s.ListObjects(input)
 }
 
-func (s *S3) upload(key string, r io.Reader) (location string, err error) {
+func (s *S3) upload(key string, r io.Reader, opts S3UploadOpts) (location string, err error) {
 	// Create new upload input
-	input := s.newUploadInput(key, r)
+	input := s.newUploadInput(key, r, opts)
+
 	var out *s3manager.UploadOutput
 	// Upload writer to amazon
 	if out, err = s.u.Upload(&input); err != nil {
@@ -118,14 +129,14 @@ func (s *S3) WriteTo(key string, fn func(io.Writer) error) (err error) {
 	}
 
 	// Upload file to amazon
-	_, err = s.upload(key, tmp)
+	_, err = s.upload(key, tmp, defaultS3UploadOpts)
 	return
 }
 
 // Upload will upload a reader to s3
-func (s *S3) Upload(key string, r io.Reader) (location string, err error) {
+func (s *S3) Upload(key string, r io.Reader, opts S3UploadOpts) (location string, err error) {
 	// Upload file to amazon
-	return s.upload(key, r)
+	return s.upload(key, r, opts)
 }
 
 // ReadFrom will pass a reader to the provided function
