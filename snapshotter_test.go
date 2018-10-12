@@ -22,6 +22,11 @@ const (
 )
 
 func TestSnapshotter(t *testing.T) {
+	// Ensure our frontend test directory has been created
+	if err := os.MkdirAll(backendTestDir, 0744); err != nil {
+		t.Fatal(err)
+	}
+
 	// Defer the removal of our backend test directory
 	defer os.RemoveAll(backendTestDir)
 	// Initialize a new file backend
