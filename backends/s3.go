@@ -196,6 +196,14 @@ func (s *S3) ForEach(prefix, marker string, maxKeys int64, fn func(key string) (
 	return
 }
 
+// Next will return the next key
+func (s *S3) Next(prefix, current string) (nextKey string, err error) {
+	// Create new iterator
+	iter := newIterator(s.s, s.bucket, prefix, current, 1)
+	// Get next key
+	return iter.Next()
+}
+
 // List will list the backend keys
 func (s *S3) List(prefix, marker string, maxKeys int64) (keys []string, err error) {
 	iter := newIterator(s.s, s.bucket, prefix, marker, maxKeys)
