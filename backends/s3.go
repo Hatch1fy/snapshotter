@@ -172,7 +172,7 @@ func (s *S3) Delete(key string) (err error) {
 }
 
 // ForEach will iterate through all the keys
-func (s *S3) ForEach(prefix, marker string, maxKeys int64, fn func(key string) (err error)) (err error) {
+func (s *S3) ForEach(prefix, marker string, maxKeys int64, fn ForEachFn) (err error) {
 	iter := newIterator(s.s, s.bucket, prefix, marker, maxKeys)
 
 	// Iterate until error
@@ -197,9 +197,9 @@ func (s *S3) ForEach(prefix, marker string, maxKeys int64, fn func(key string) (
 }
 
 // Next will return the next key
-func (s *S3) Next(prefix, current string) (nextKey string, err error) {
+func (s *S3) Next(prefix, marker string) (nextKey string, err error) {
 	// Create new iterator
-	iter := newIterator(s.s, s.bucket, prefix, current, 1)
+	iter := newIterator(s.s, s.bucket, prefix, marker, 1)
 	// Get next key
 	return iter.Next()
 }
