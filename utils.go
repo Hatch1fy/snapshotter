@@ -104,4 +104,5 @@ type Backend interface {
 	ReadFrom(key string, fn func(io.Reader) error) error
 	Delete(key string) error
 	List(prefix, marker string, maxKeys int64) ([]string, error)
+	Next(prefix, marker string) (string, error)
 }
