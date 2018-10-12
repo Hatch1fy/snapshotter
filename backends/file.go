@@ -75,6 +75,10 @@ func (fb *File) Delete(key string) (err error) {
 func (fb *File) ForEach(prefix, marker string, maxKeys int64, fn ForEachFn) (err error) {
 	var cnt int64
 	err = filepath.Walk(fb.dir, func(filepath string, info os.FileInfo, ierr error) (err error) {
+		if info == nil {
+			return
+		}
+
 		if info.IsDir() {
 			return
 		}
