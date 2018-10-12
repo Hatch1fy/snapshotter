@@ -71,32 +71,35 @@ func (fb *File) Delete(key string) (err error) {
 	return os.Remove(filepath.Join(fb.dir, key))
 }
 
-// List will list the available keys
-func (fb *File) List(prefix, marker string, maxKeys int64) (keys []string, err error) {
+// ForEach will iterate through all the keys
+func (fb *File) ForEach(prefix, marker string, maxKeys int64, fn ForEachFn) (err error) {
+	var cnt int64
 	err = filepath.Walk(fb.dir, func(filepath string, info os.FileInfo, ierr error) (err error) {
 		if info.IsDir() {
 			return
 		}
 
 		// Truncate filepath to exclude the directory
-		filepath = filepath[len(fb.dir):]
+		filepath = path.Base(filepath)
 
 		if strings.Index(filepath, prefix) == -1 {
 			return
 		}
 
-		// Check if filepath without prefix is less than the marker
-		if filepath[len(prefix):] < marker {
+		// Check to see if we've past the marker yet
+		if filepath <= marker {
 			return
 		}
 
-		keys = append(keys, filepath)
+		if err = fn(filepath); err != nil {
+			return
+		}
 
 		if maxKeys == -1 {
 			return
 		}
 
-		if int64(len(keys)) == maxKeys {
+		if cnt++; cnt == maxKeys {
 			return Break
 		}
 
@@ -106,6 +109,30 @@ func (fb *File) List(prefix, marker string, maxKeys int64) (keys []string, err e
 	if err == Break {
 		err = nil
 	}
+
+	return
+}
+
+// Next will return the next key
+func (fb *File) Next(prefix, marker string) (nextKey string, err error) {
+	err = fb.ForEach(prefix, marker, 1, func(key string) (err error) {
+		nextKey = key
+		return
+	})
+
+	if len(nextKey) == 0 {
+		err = io.EOF
+	}
+
+	return
+}
+
+// List will list the available keys
+func (fb *File) List(prefix, marker string, maxKeys int64) (keys []string, err error) {
+	err = fb.ForEach(prefix, marker, maxKeys, func(key string) (err error) {
+		keys = append(keys, key)
+		return
+	})
 
 	return
 }
