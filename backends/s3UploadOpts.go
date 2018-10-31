@@ -8,6 +8,7 @@ type S3UploadOpts struct {
 	ContentLanguage    string
 	ContentType        string
 	ContentMD5         string
+	ACL                string
 }
 
 // GetCacheControl will retrieve a string pointer of the cache control value
@@ -39,6 +40,11 @@ func (o *S3UploadOpts) GetContentType() *string {
 // GetContentMD5 will retrieve a string pointer of the md5 content value
 func (o *S3UploadOpts) GetContentMD5() *string {
 	return getStrPtr(o.ContentMD5)
+}
+
+// GetACL will retrieve a string pointer of the ACL content value
+func (o *S3UploadOpts) GetACL() *string {
+	return getStrPtr(o.ACL)
 }
 
 // getStrPtr will get a string pointer of the provided string
