@@ -62,6 +62,7 @@ func (s *S3) newUploadInput(key string, r io.Reader, opts S3UploadOpts) (input s
 	input.ContentLanguage = opts.GetContentLanguage()
 	input.ContentMD5 = opts.GetContentMD5()
 	input.ContentType = opts.GetContentType()
+	input.ACL = opts.GetACL()
 	return
 }
 
