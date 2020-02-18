@@ -11,8 +11,8 @@ import (
 
 	"github.com/Hatch1fy/snapshotter"
 	"github.com/Hatch1fy/snapshotter/backends"
-	"github.com/hatch1fy/scribe"
-	"github.com/missionMeteora/toolkit/closer"
+	"github.com/hatchify/scribe"
+	"github.com/hatchify/closer"
 )
 
 func main() {

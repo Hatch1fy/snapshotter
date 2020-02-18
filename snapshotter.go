@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/Hatch1fy/errors"
-	"github.com/PathDNA/atoms"
+	"github.com/hatchify/atoms"
 )
 
 const (
