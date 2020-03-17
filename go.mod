@@ -10,5 +10,5 @@ require (
 	github.com/boltdb/bolt v1.3.1
 	github.com/hatchify/atoms v0.3.0
 	github.com/hatchify/closer v0.3.0
-	github.com/hatchify/scribe v0.3.0
+	github.com/hatchify/scribe v0.3.1
 )
