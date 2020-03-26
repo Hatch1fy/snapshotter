@@ -2,6 +2,8 @@ module github.com/Hatch1fy/snapshotter
 
 go 1.14
 
+// *** Separate Local Deps *** \\
+
 require (
 	github.com/BurntSushi/toml v0.3.1
 	github.com/Hatch1fy/errors v0.4.76
@@ -12,5 +14,3 @@ require (
 	github.com/hatchify/closer v0.4.76
 	github.com/hatchify/scribe v0.4.76
 )
-
-// *** Separate Local Deps *** \\
