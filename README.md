@@ -34,12 +34,14 @@ func main() {
 
 	// Create bolt database
 	if db, err = createBoltDB(); err != nil {
-		log.Fatal(err)
+		out.Errorf("error during Init: %v", err)
+        return
 	}
 
 	// Populate bolt database
 	if err = populateValues(db); err != nil {
-		log.Fatal(err)
+		out.Errorf("error during Init: %v", err)
+        return
 	}
 
 	// Initialize bolt front-end
@@ -58,7 +60,8 @@ func main() {
 	cfg.Truncate = snapshotter.Minute
 
 	if s, err = snapshotter.New(fe, be, cfg); err != nil {
-		log.Fatal(err)
+		out.Errorf("error during Init: %v", err)
+        return
 	}
 	defer s.Close()
 
@@ -68,7 +71,8 @@ func main() {
 	var latest string
 	// Get latest key
 	if latest, err = s.LatestKey(); err != nil {
-		log.Fatal(err)
+		out.Errorf("error during Init: %v", err)
+        return
 	}
 
 	fmt.Printf("Our latest key was: %s\n", latest)
@@ -77,7 +81,8 @@ func main() {
 func createBoltDB() (db *bolt.DB, err error) {
 	// Ensure our frontend test directory has been created
 	if err = os.MkdirAll(frontendDir, 0744); err != nil {
-		log.Fatal(err)
+		out.Errorf("error during Init: %v", err)
+        return
 	}
 
 	// Open a bolt database within the frontend test directory with the name of "bolt.db"
