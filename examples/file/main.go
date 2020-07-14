@@ -7,9 +7,9 @@ import (
 	"path"
 	"time"
 
-	"github.com/Hatch1fy/snapshotter"
-	"github.com/Hatch1fy/snapshotter/backends"
-	"github.com/Hatch1fy/snapshotter/frontends"
+	"github.com/gdbu/snapshotter"
+	"github.com/gdbu/snapshotter/backends"
+	"github.com/gdbu/snapshotter/frontends"
 
 	"github.com/boltdb/bolt"
 )

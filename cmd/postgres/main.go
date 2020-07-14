@@ -7,12 +7,12 @@ import (
 	"time"
 
 	"github.com/Hatch1fy/pgutils"
-	"github.com/Hatch1fy/snapshotter/frontends"
+	"github.com/gdbu/snapshotter/frontends"
 
-	"github.com/Hatch1fy/snapshotter"
-	"github.com/Hatch1fy/snapshotter/backends"
-	"github.com/hatchify/scribe"
+	"github.com/gdbu/snapshotter"
+	"github.com/gdbu/snapshotter/backends"
 	"github.com/hatchify/closer"
+	"github.com/hatchify/scribe"
 )
 
 func main() {

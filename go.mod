@@ -1,4 +1,4 @@
-module github.com/Hatch1fy/snapshotter
+module github.com/gdbu/snapshotter
 
 go 1.14
 
