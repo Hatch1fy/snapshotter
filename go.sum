@@ -1,8 +1,7 @@
 github.com/BurntSushi/toml v0.3.1 h1:WXkYYl6Yr3qBf1K79EBnL4mak0OimBfB0XUf9Vl28OQ=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
-github.com/Hatch1fy/cron v0.4.77 h1:VmORottzpTEA9gMITt0EUAaIupAYH4hMgXFAhz7APUY=
-github.com/Hatch1fy/cron v0.4.77/go.mod h1:qTM34B/bZEHUopeeyEIbvRGaZ9OcI0h5JfpLfI19rrU=
-github.com/Hatch1fy/errors v0.4.77/go.mod h1:LPnug0nWT7I99nYl62NfYjxNMCCEx3lBV5YWIco+H0w=
+github.com/Hatch1fy/cron v0.4.78 h1:aNdJfiFYfEPWprxEBHM9taHV6jwWjMo17OvQYnD8528=
+github.com/Hatch1fy/cron v0.4.78/go.mod h1:srziZhU5rAzVXoUSkVkzq3iZOk+u+Y7pV3nL+dXN9L4=
 github.com/Hatch1fy/errors v0.4.78 h1:Xd64lclmP6Gg5i9WFm0wJWkcmf/1rd82DavHTpLVLZs=
 github.com/Hatch1fy/errors v0.4.78/go.mod h1:SJFCeScmERvwtYMG7EU24Fe0KfXmiIs7tNlcIl0STKk=
 github.com/Hatch1fy/pgutils v0.4.80 h1:BO/4Y5bQpiCaD9KlJxKoutA/ciAA8djnSJpEdPtnqgE=
@@ -20,8 +19,8 @@ github.com/hatchify/closer v0.4.78 h1:mwI0j5kvwEPeZ8AQ35rQfuPGM4VUt/gtjI3ASsqYTi
 github.com/hatchify/closer v0.4.78/go.mod h1:9Wj3IOc9TYssGRiKcMFtK+kZXSuOzP8N7cel9OIhB1M=
 github.com/hatchify/colors v0.4.77 h1:wPtYLLPbsekeamTZzu71rZVsbq8P2ues1YDx7OsKAxU=
 github.com/hatchify/colors v0.4.77/go.mod h1:AG6qII7bJEBO7WL28IACU62PqoavhEqpNFhfE/5Zyfk=
-github.com/hatchify/scribe v0.4.78 h1:35wRjRJxRbj3NBGYg0/sPGpd0HfI8tWucKPFI0upAno=
-github.com/hatchify/scribe v0.4.78/go.mod h1:TLTVF/+b0yJtiVRZjW0XUMh4yVDikJZG2z3tkA+L2xM=
+github.com/hatchify/scribe v0.4.79 h1:vtm+hfqNUUEEwKfk+Z8z9fnZcqFjCFf0cAA8ZSYs8q4=
+github.com/hatchify/scribe v0.4.79/go.mod h1:Cdy81t7usC0+YCd9xRWP2zvK86z+v8T3OUuewKcERy8=
 github.com/jmespath/go-jmespath v0.3.0 h1:OS12ieG61fsCg5+qLJ+SsW9NicxNkg3b25OyT2yCeUc=
 github.com/jmespath/go-jmespath v0.3.0/go.mod h1:9QtRXoHjLGCJ5IBSaohpXITPlowMeeYCZ7fLUTSywik=
 github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
