@@ -2,7 +2,6 @@ github.com/BurntSushi/toml v0.3.1 h1:WXkYYl6Yr3qBf1K79EBnL4mak0OimBfB0XUf9Vl28OQ
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/Hatch1fy/cron v0.4.78 h1:aNdJfiFYfEPWprxEBHM9taHV6jwWjMo17OvQYnD8528=
 github.com/Hatch1fy/cron v0.4.78/go.mod h1:srziZhU5rAzVXoUSkVkzq3iZOk+u+Y7pV3nL+dXN9L4=
-github.com/Hatch1fy/errors v0.4.78/go.mod h1:SJFCeScmERvwtYMG7EU24Fe0KfXmiIs7tNlcIl0STKk=
 github.com/Hatch1fy/errors v0.4.80 h1:LBr5Elytx6npBlF/36KTamC6I7h6VqkOVkRkbIdj3xY=
 github.com/Hatch1fy/errors v0.4.80/go.mod h1:SJFCeScmERvwtYMG7EU24Fe0KfXmiIs7tNlcIl0STKk=
 github.com/Hatch1fy/pgutils v0.4.83 h1:CRIQV7AdjDW9TlB+1i1T+tLjweaHVKG6NMN2YmqgHOg=
@@ -20,8 +19,8 @@ github.com/hatchify/closer v0.4.79 h1:NXa2+Plrbrwx+Dm6PhxShd3num/XGmUXFpPGSGgi20
 github.com/hatchify/closer v0.4.79/go.mod h1:+NYZB56TVIjISbsB1j4Y4oqX60mpdFSwQkcjqgkmnls=
 github.com/hatchify/colors v0.4.78 h1:T76bb++0Kc4VPpDR18p3KD81vSDFPWKd46EKgkxyX/E=
 github.com/hatchify/colors v0.4.78/go.mod h1:t0952Ef1zDFMVTCkOwhrdJS9ToVWTdcJ3PWCHZADLuU=
-github.com/hatchify/scribe v0.4.80 h1:TzXO+Mv5j9CoUIdt9JLGl9fJ1lTBti5Se9IgHRzi6NM=
-github.com/hatchify/scribe v0.4.80/go.mod h1:kqwVjh0PGR6N7EMSrim6yGIUirdkYouXVl9Sw4rONAg=
+github.com/hatchify/scribe v0.4.81 h1:kagGTvTaPJ4F8vWRCvieWmVdpqGU7YoXOf2PpI4085E=
+github.com/hatchify/scribe v0.4.81/go.mod h1:dNVgLOuKsrq5CQnL8aopJSzWFyriRiw4PF6cinbc+dU=
 github.com/jmespath/go-jmespath v0.3.0 h1:OS12ieG61fsCg5+qLJ+SsW9NicxNkg3b25OyT2yCeUc=
 github.com/jmespath/go-jmespath v0.3.0/go.mod h1:9QtRXoHjLGCJ5IBSaohpXITPlowMeeYCZ7fLUTSywik=
 github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
