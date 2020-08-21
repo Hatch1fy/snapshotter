@@ -10,10 +10,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Hatch1fy/errors"
 	"github.com/boltdb/bolt"
 	"github.com/gdbu/snapshotter/backends"
 	"github.com/gdbu/snapshotter/frontends"
+	"github.com/hatchify/errors"
 )
 
 const (

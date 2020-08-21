@@ -3,7 +3,7 @@ package snapshotter
 import (
 	"time"
 
-	"github.com/Hatch1fy/errors"
+	"github.com/hatchify/errors"
 )
 
 // NewConfig will return a new default Config with the given name and extension

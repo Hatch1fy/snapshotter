@@ -3,9 +3,9 @@ package backends
 import (
 	"io"
 
-	"github.com/Hatch1fy/errors"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/hatchify/errors"
 )
 
 const (
