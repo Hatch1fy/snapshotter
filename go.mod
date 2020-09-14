@@ -10,5 +10,5 @@ require (
 	github.com/hatchify/atoms v0.4.79
 	github.com/hatchify/closer v0.4.81
 	github.com/hatchify/errors v0.4.82
-	github.com/hatchify/scribe v0.4.85
+	github.com/hatchify/scribe v0.4.87
 )
