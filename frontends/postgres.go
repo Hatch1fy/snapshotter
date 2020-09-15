@@ -3,7 +3,7 @@ package frontends
 import (
 	"io"
 
-	"github.com/Hatch1fy/pgutils"
+	"github.com/hatchify/pgutils"
 
 	"sync/atomic"
 )

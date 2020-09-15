@@ -6,8 +6,8 @@ import (
 	"path"
 	"time"
 
-	"github.com/Hatch1fy/pgutils"
 	"github.com/gdbu/snapshotter/frontends"
+	"github.com/hatchify/pgutils"
 
 	"github.com/gdbu/snapshotter"
 	"github.com/gdbu/snapshotter/backends"
